@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "edu.uabc.hgch.Taller5.Main",
+            "projectName": "Java_e8289e63"
+        },
+        {
+            "type": "java",
             "name": "main",
             "request": "launch",
             "mainClass": "edu.uabc.hgch.Taller4.main",

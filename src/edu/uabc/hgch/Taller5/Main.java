@@ -4,11 +4,15 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+
     private static TreeSet<Usuario> usuarios = new TreeSet<>();
     private static Scanner input = new Scanner(System.in);
     private static Usuario usuarioActual = null;
+    private static final String ARCHIVO = "Usuario.txt";
 
     public static void main(String[] args) {
+        deserializar();
+
         while (true) {
             if (usuarioActual == null) {
                 mostrarMenuPrincipal();
@@ -25,24 +29,29 @@ public class Main {
         System.out.println("3) Salir");
         System.out.print("Seleccione una opción: ");
 
-        int opcion_main = input.nextInt();
-        input.nextLine();
+        int opcion_main;
+        try {
+            opcion_main = Integer.parseInt(input.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: ingrese un número válido.");
+            return;
+        }
+
         System.out.println();
-        
+
         switch (opcion_main) {
-            case 1: // iniciar sesion
+            case 1:
                 iniciarSesion();
                 break;
-
-            case 2: // registro
+            case 2:
                 registrarUsuario();
                 break;
-
-            case 3: // salir
+            case 3:
+                guardarUsuarios();
                 input.close();
+                System.out.println("Saliendo del sistema...");
                 System.exit(0);
                 break;
-
             default:
                 System.out.println("Opción inválida.");
                 break;
@@ -59,43 +68,53 @@ public class Main {
         System.out.println("6) Cerrar sesión");
         System.out.print("Seleccione una opción: ");
 
-        int opcion_user = input.nextInt();
-        input.nextLine();
+        int opcion_user;
+        try {
+            opcion_user = Integer.parseInt(input.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: ingrese un número válido.");
+            return;
+        }
+
         System.out.println();
 
         switch (opcion_user) {
-            case 1: // mostrar info
+            case 1:
                 System.out.println("Nombre: " + usuarioActual.getNombre());
                 System.out.println("Apellido: " + usuarioActual.getApellido());
                 System.out.println("Correo: " + usuarioActual.getCorreo());
                 System.out.println("Usuario: " + usuarioActual.getUsername());
                 break;
 
-            case 2: // editar nombre
+            case 2:
                 System.out.print("Nuevo nombre: ");
                 usuarioActual.setNombre(input.nextLine());
                 System.out.println("Nombre actualizado.");
+                guardarUsuarios();
                 break;
 
-            case 3: // editar apellido
+            case 3:
                 System.out.print("Nuevo apellido: ");
                 usuarioActual.setApellido(input.nextLine());
                 System.out.println("Apellido actualizado.");
+                guardarUsuarios();
                 break;
 
-            case 4: // editar contrasena
+            case 4:
                 System.out.print("Nueva contraseña: ");
                 usuarioActual.setPassword(input.nextLine());
                 System.out.println("Contraseña actualizada.");
+                guardarUsuarios();
                 break;
 
             case 5:
                 usuarios.remove(usuarioActual);
-                System.out.println("Cuenta eliminada exitosamente.");
                 usuarioActual = null;
+                System.out.println("Cuenta eliminada exitosamente.");
+                guardarUsuarios();
                 break;
 
-            case 6: // cerrar sesion
+            case 6:
                 System.out.println("Sesión cerrada...");
                 usuarioActual = null;
                 break;
@@ -126,7 +145,7 @@ public class Main {
             usuarioActual = encontrado;
             System.out.println("Inicio de sesión exitoso.");
         } else {
-            System.out.println("Error de inicio de sesion");
+            System.out.println("Error de inicio de sesión.");
         }
     }
 
@@ -135,7 +154,7 @@ public class Main {
         String nombre = input.nextLine();
         System.out.print("Apellido: ");
         String apellido = input.nextLine();
-        System.out.print("Correo electronico: ");
+        System.out.print("Correo electrónico: ");
         String correo = input.nextLine();
         System.out.print("Nombre de usuario: ");
         String username = input.nextLine();
@@ -144,67 +163,50 @@ public class Main {
 
         for (Usuario u : usuarios) {
             if (u.getCorreo().equals(correo) || u.getUsername().equals(username)) {
-            System.out.println("Error: Correo o Nombre de Usuario ya registrados.");
-            System.out.print("¿Desea volver a capturar los datos? (s/n): ");
-            String opcion = input.nextLine().trim().toLowerCase();
-            
-            if (opcion.equals("s")) {
-                registrarUsuario();
-            } else {
-                System.out.println("Registro cancelado. Regresando al menú principal.");
-            }
-
-            return;
+                System.out.println("Error: Correo o Nombre de Usuario ya registrados.");
+                System.out.print("¿Desea volver a capturar los datos? (s/n): ");
+                String opcion = input.nextLine().trim().toLowerCase();
+                if (opcion.equals("s")) {
+                    registrarUsuario();
+                } else {
+                    System.out.println("Registro cancelado. Regresando al menú principal.");
+                }
+                return;
             }
         }
 
         Usuario nuevo = new Usuario(nombre, apellido, correo, username, password);
         usuarios.add(nuevo);
         System.out.println("Usuario registrado exitosamente.");
+        guardarUsuarios();
     }
 
-    public static void serializar() {
-        ArrayList<Usuario> users_list = new ArrayList<>();
+    private static void guardarUsuarios() {
+        try (FileOutputStream fos = new FileOutputStream(ARCHIVO);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
-        // users_list.add( new Usuario("Edgar","Betancourt","01,ENE,1990") );
-        // users_list.add( new Usuario("Alberto","Betancourt","10,SEP,1996") );
-        // users_list.add( new Usuario("Juan","Perez","24,MAY,2004") );
-
-        try (FileOutputStream fos = new FileOutputStream("Usuario.txt");
-             ObjectOutputStream oos = new ObjectOutputStream(fos) ) {
-            //RECORRER LA LISTA DE USUARIOS
-            for(Usuario usuario : users_list) {
-                //ESCRIBIR USUARIO EN ARCHIVO
-                oos.writeObject(usuario);
-            }
-            System.out.println("\nObjeto serializado exitosamente en Usuario.txt");
-        } 
-        catch (IOException e) {
-            System.out.println("ERROR AL SERIALIZAR");
-            e.printStackTrace();
+            oos.writeObject(usuarios);
+            System.out.println("(Usuarios guardados en " + ARCHIVO + ")");
+        } catch (IOException e) {
+            System.out.println("ERROR AL SERIALIZAR: " + e.getMessage());
         }
     }
-    
-    public static  void deserializar() {
-        ArrayList<Usuario> users_list = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream("Usuario.txt");
+
+    @SuppressWarnings("unchecked")
+    private static void deserializar() {
+        File archivo = new File(ARCHIVO);
+        if (!archivo.exists()) {
+            return;
+        }
+
+        try (FileInputStream fis = new FileInputStream(ARCHIVO);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
 
-            Usuario usuario;
-            //LEER EL USUARIOS DEL ARCHIVO
-            while( ( usuario = (Usuario) ois.readObject()) != null) {
-                //AGREGAR USUARIO A LISTA
-                users_list.add(usuario);
-            }
-        }
-        catch (EOFException e) {
-            System.out.println("FIN DE ARCHIVO");
-        }
+            usuarios = (TreeSet<Usuario>) ois.readObject();
+            System.out.println("Usuarios cargados correctamente desde " + ARCHIVO);
 
-        catch (IOException | ClassNotFoundException e) {
-            System.out.println("ERROR AL DESERIALIZAR");
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("ERROR AL DESERIALIZAR: " + e.getMessage());
         }
-        System.out.printf("\n LISTA: %s",users_list);
     }
 }
