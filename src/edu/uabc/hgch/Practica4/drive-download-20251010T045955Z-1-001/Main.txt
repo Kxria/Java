@@ -1,0 +1,61 @@
+package practica4;
+
+/*
+javac -d bin src/practica4/*.java
+java -cp bin practica4.Main
+*/
+
+import java.util.concurrent.*;
+
+public class Main
+{
+    public static void main(String []args)
+    {
+        
+        //EJEMPLO CONDICION DE CARRERA
+        System.out.println("\n\n EJEMPLO CONDICION DE CARRERA "); 
+        ejemplo_condicion_de_carrera();
+        //EJEMPLO CON SEM
+        System.out.println("\n\n EJEMPLO CON SEMAPHORE "); 
+        ejemplo_sem();     
+    }
+    
+    public static void ejemplo_condicion_de_carrera()
+    {
+        final Recurso recurso = new Recurso(0);
+        
+        Hilo hilo1 = new Hilo("Hilo 1",3,recurso); //INCREMENTA EN 5
+        Hilo hilo2 = new Hilo("Hilo 2",3,recurso); //INCREMENTA EN 5
+        
+        //ESPERAR A QUE LOS HILOS TERMINEN SU EJECUCION
+        hilo1.esperar();
+        hilo2.esperar();
+        //ESPERANDO UN 10 DE RESULTADO        
+        System.out.println("RECURSO: "+recurso.get_dato());        
+    }
+    
+
+    
+    public static void ejemplo_sem()
+    {
+        final Recurso recurso = new Recurso(0);
+        Semaphore sem = new Semaphore(1,true); //SOLO UN PERMISO Y RESPETA ORDEN DE SOLICITUD
+        
+        HiloSem hilo1 = new HiloSem("Hilo 1",3,recurso,sem); //INCREMENTA EN 3
+        HiloSem hilo2 = new HiloSem("Hilo 2",3,recurso,sem); //INCREMENTA EN 3
+        
+        //ESPERAR A QUE LOS HILOS TERMINEN SU EJECUCION
+        hilo1.esperar();
+        hilo2.esperar();
+        //ESPERANDO UN 6 DE RESULTADO        
+        System.out.println("RECURSO: "+recurso.get_dato());        
+    }
+       
+    
+ 
+}
+
+
+
+  
+

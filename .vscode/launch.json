@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MainReloj",
+            "request": "launch",
+            "mainClass": "edu.uabc.hgch.Practica4.MainReloj",
+            "projectName": "Java_e8289e63"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "edu.uabc.hgch.Practica4.Main",
+            "projectName": "Java_e8289e63"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "edu.uabc.hgch.Taller5.Main",
