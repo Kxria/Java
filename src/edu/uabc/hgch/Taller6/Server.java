@@ -1,8 +1,4 @@
 package edu.uabc.hgch.Taller6;
-/*
-javac -d bin src/taller6/*.java
-java -cp bin taller6.Main
-*/
 
 import java.util.concurrent.*;
 

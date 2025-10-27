@@ -8,6 +8,27 @@
             "type": "java",
             "name": "Main",
             "request": "launch",
+            "mainClass": "edu.uabc.hgch.Taller7.Main",
+            "projectName": "Java_e8289e63"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "edu.uabc.hgch.test.Main",
+            "projectName": "Java_e8289e63"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "edu.uabc.hgch.Practica5.Main",
+            "projectName": "Java_e8289e63"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
             "mainClass": "edu.uabc.hgch.Taller6.Main",
             "projectName": "Java_e8289e63"
         },
